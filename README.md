@@ -40,4 +40,4 @@ MIT License — free to remix, expand, and launch.
 ---
 ## 🤝 Contribute
 Want to join the SentiLink Collective?  
-Reach out on [X](https://x.com/Sentilink_ai) or Telegram: `@sentilink_ai`.
+Reach out on [X](https://x.com/Sentilink_ai) or Telegram: `https://t.me/sentilink_ai`.
