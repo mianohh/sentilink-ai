@@ -5,7 +5,7 @@ require_once 'functions.php';
 if ($_POST) {
     $user_id = getUserByIP($pdo);
     $mood_input = '';
-    $mood_type = $_POST['mood_type'] ?? 'text';
+    $mood_type = $_POST['mood_type'] ?? 'maandishi';
     
     // Determine mood input based on type
     if (!empty($_POST['mood_emoji'])) {
@@ -13,7 +13,7 @@ if ($_POST) {
         $mood_type = 'emoji';
     } elseif (!empty($_POST['mood_text'])) {
         $mood_input = $_POST['mood_text'];
-        $mood_type = 'text';
+        $mood_type = 'maandishi';
     } else {
         // Redirect back if no input
         header('Location: index.php');
@@ -36,13 +36,25 @@ if ($_POST) {
     header('Location: index.php');
     exit;
 }
+
+// Translation array for mood categories
+$mood_translations = [
+    'furaha' => 'Furaha',
+    'huzuni' => 'Huzuni',
+    'hasira' => 'Hasira',
+    'wasiwasi' => 'Wasiwasi',
+    'msisimko' => 'Msisimko',
+    'utulivu' => 'Utulivu'
+];
+
+$mood_display = $mood_translations[$mood_category] ?? ucfirst($mood_category);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Mood Analysis - SentiLink AI</title>
+    <title>Uchambuzi wa Hisia Zako - SentiLink AI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -54,27 +66,27 @@ if ($_POST) {
                 <!-- Mood Analysis Results -->
                 <div class="card shadow-lg mb-4">
                     <div class="card-header bg-success text-white text-center">
-                        <h2 class="mb-0">Your Mood Analysis</h2>
-                        <p class="mb-0">Detected mood: <strong><?php echo ucfirst($mood_category); ?></strong></p>
+                        <h2 class="mb-0">Uchambuzi wa Hisia Zako</h2>
+                        <p class="mb-0">Hisia iliyogunduliwa: <strong><?php echo $mood_display; ?></strong></p>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <h4>Your Mood Meme 🎭</h4>
+                                <h4>Picha ya Hisia Yako 🎭</h4>
                                 <?php if ($meme): ?>
                                     <div class="meme-container">
                                         <div class="placeholder-meme bg-light border rounded p-4 text-center">
                                             <h5><?php echo htmlspecialchars($meme['alt_text']); ?></h5>
-                                            <p class="text-muted">Meme: <?php echo htmlspecialchars($meme['file_path']); ?></p>
+                                            <p class="text-muted">Picha: <?php echo htmlspecialchars($meme['file_path']); ?></p>
                                             <div class="emoji-large">
                                                 <?php 
                                                 $mood_emojis = [
-                                                    'happy' => '😊',
-                                                    'sad' => '😢',
-                                                    'angry' => '😠',
-                                                    'anxious' => '😰',
-                                                    'excited' => '🤩',
-                                                    'calm' => '😌'
+                                                    'furaha' => '😊',
+                                                    'huzuni' => '😢',
+                                                    'hasira' => '😠',
+                                                    'wasiwasi' => '😰',
+                                                    'msisimko' => '🤩',
+                                                    'utulivu' => '😌'
                                                 ];
                                                 echo $mood_emojis[$mood_category] ?? '🙂';
                                                 ?>
@@ -84,7 +96,7 @@ if ($_POST) {
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-6">
-                                <h4>Psychological Insight 🧠</h4>
+                                <h4>Maarifa ya Kisaikolojia 🧠</h4>
                                 <?php if ($insight): ?>
                                     <div class="insight-box bg-light p-3 rounded">
                                         <p class="mb-0"><?php echo htmlspecialchars($insight['insight_text']); ?></p>
@@ -94,7 +106,7 @@ if ($_POST) {
                         </div>
                         
                         <div class="text-center mt-4">
-                            <a href="index.php" class="btn btn-primary">Share Another Mood</a>
+                            <a href="index.php" class="btn btn-primary">Shiriki Hisia Nyingine</a>
                         </div>
                     </div>
                 </div>
@@ -104,7 +116,7 @@ if ($_POST) {
                 <!-- Community Mood Flow -->
                 <div class="card shadow">
                     <div class="card-header bg-info text-white">
-                        <h5 class="mb-0">Community Mood Flow (24h)</h5>
+                        <h5 class="mb-0">Mtiririko wa Hisia za Jamii (Masaa 24)</h5>
                     </div>
                     <div class="card-body">
                         <canvas id="moodChart" width="300" height="300"></canvas>
@@ -114,12 +126,12 @@ if ($_POST) {
                 <!-- Mood Stats -->
                 <div class="card shadow mt-3">
                     <div class="card-header bg-secondary text-white">
-                        <h6 class="mb-0">Recent Mood Statistics</h6>
+                        <h6 class="mb-0">Takwimu za Hisia za Hivi Karibuni</h6>
                     </div>
                     <div class="card-body">
                         <?php foreach ($community_data as $mood_data): ?>
                             <div class="d-flex justify-content-between mb-2">
-                                <span><?php echo ucfirst($mood_data['mood_category']); ?></span>
+                                <span><?php echo $mood_translations[$mood_data['mood_category']] ?? ucfirst($mood_data['mood_category']); ?></span>
                                 <span class="badge bg-primary"><?php echo $mood_data['count']; ?></span>
                             </div>
                         <?php endforeach; ?>
@@ -134,23 +146,33 @@ if ($_POST) {
         const ctx = document.getElementById('moodChart').getContext('2d');
         const moodData = <?php echo json_encode($community_data); ?>;
         
-        const labels = moodData.map(item => item.mood_category);
-        const data = moodData.map(item => item.count);
-        const colors = {
-            'happy': '#FFD700',
-            'sad': '#4169E1',
-            'angry': '#DC143C',
-            'anxious': '#FF8C00',
-            'excited': '#FF1493',
-            'calm': '#32CD32'
+        // Translation object for chart labels
+        const moodTranslations = {
+            'furaha': 'Furaha',
+            'huzuni': 'Huzuni',
+            'hasira': 'Hasira',
+            'wasiwasi': 'Wasiwasi',
+            'msisimko': 'Msisimko',
+            'utulivu': 'Utulivu'
         };
         
-        const backgroundColors = labels.map(label => colors[label] || '#808080');
+        const labels = moodData.map(item => moodTranslations[item.mood_category] || item.mood_category);
+        const data = moodData.map(item => item.count);
+        const colors = {
+            'furaha': '#FFD700',
+            'huzuni': '#4169E1',
+            'hasira': '#DC143C',
+            'wasiwasi': '#FF8C00',
+            'msisimko': '#FF1493',
+            'utulivu': '#32CD32'
+        };
+        
+        const backgroundColors = moodData.map(item => colors[item.mood_category] || '#808080');
         
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: labels.map(label => label.charAt(0).toUpperCase() + label.slice(1)),
+                labels: labels,
                 datasets: [{
                     data: data,
                     backgroundColor: backgroundColors,

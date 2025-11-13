@@ -1,6 +1,6 @@
 <?php
 // Database configuration
-define('DB_HOST', 'localhost'); // Change as needed
+define('DB_HOST', ''); // Change as needed
 define('DB_NAME', '');
 define('DB_USER', ''); // Change as needed
 define('DB_PASS', ''); // Change as needed

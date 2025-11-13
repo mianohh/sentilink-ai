@@ -24,18 +24,19 @@ function getUserByIP($pdo) {
 
 /**
  * Analyze mood input and categorize it
+ * Supports both English and Swahili
  */
 function analyzeMood($input) {
     $input = strtolower(trim($input));
     
     // Emoji mapping
     $emoji_patterns = [
-        'happy' => ['😊', '😄', '😃', '😁', '🙂', '😍', '🥰', '😊'],
-        'sad' => ['😢', '😭', '😞', '😔', '😪', '😿', '💔'],
-        'angry' => ['😠', '😡', '🤬', '😤', '💢', '🔥'],
-        'anxious' => ['😰', '😨', '😟', '😧', '😳', '🙁'],
-        'excited' => ['🤩', '😆', '🎉', '🥳', '⚡', '🔥'],
-        'calm' => ['😌', '😇', '🧘', '☮️', '🕊️']
+        'furaha' => ['😊', '😄', '😃', '😁', '🙂', '😍', '🥰', '😊'],
+        'huzuni' => ['😢', '😭', '😞', '😔', '😪', '😿', '💔'],
+        'hasira' => ['😠', '😡', '🤬', '😤', '💢', '🔥'],
+        'wasiwasi' => ['😰', '😨', '😟', '😧', '😳', '🙁'],
+        'msisimko' => ['🤩', '😆', '🎉', '🥳', '⚡', '🔥'],
+        'utulivu' => ['😌', '😇', '🧘', '☮️', '🕊️']
     ];
     
     // Check for emojis first
@@ -47,14 +48,44 @@ function analyzeMood($input) {
         }
     }
     
-    // Text-based mood analysis
+    // Text-based mood analysis - Swahili and English keywords
     $mood_keywords = [
-        'happy' => ['happy', 'joy', 'great', 'awesome', 'amazing', 'good', 'wonderful', 'fantastic', 'cheerful', 'delighted'],
-        'sad' => ['sad', 'depressed', 'down', 'blue', 'unhappy', 'miserable', 'heartbroken', 'crying', 'tearful'],
-        'angry' => ['angry', 'mad', 'furious', 'rage', 'annoyed', 'irritated', 'pissed', 'frustrated'],
-        'anxious' => ['anxious', 'worried', 'nervous', 'stressed', 'panic', 'fear', 'scared', 'overwhelmed'],
-        'excited' => ['excited', 'thrilled', 'pumped', 'energetic', 'enthusiastic', 'hyped'],
-        'calm' => ['calm', 'peaceful', 'relaxed', 'serene', 'tranquil', 'zen', 'chill']
+        'furaha' => [
+            // Swahili
+            'furaha', 'shangwe', 'raha', 'nzuri', 'vizuri', 'safi', 'poa', 'fahari',
+            // English
+            'happy', 'joy', 'great', 'awesome', 'amazing', 'good', 'wonderful', 'fantastic', 'cheerful', 'delighted'
+        ],
+        'huzuni' => [
+            // Swahili
+            'huzuni', 'majonzi', 'sikitiko', 'masikitiko', 'uchungu', 'huzunika', 'chungu',
+            // English
+            'sad', 'depressed', 'down', 'blue', 'unhappy', 'miserable', 'heartbroken', 'crying', 'tearful'
+        ],
+        'hasira' => [
+            // Swahili
+            'hasira', 'ghadhabu', 'uchungu', 'kasiriko', 'ugomvi', 'kero',
+            // English
+            'angry', 'mad', 'furious', 'rage', 'annoyed', 'irritated', 'pissed', 'frustrated'
+        ],
+        'wasiwasi' => [
+            // Swahili
+            'wasiwasi', 'hofu', 'woga', 'mshtuko', 'taharuki', 'msongo', 'dhiki', 'wasiwasi mkubwa',
+            // English
+            'anxious', 'worried', 'nervous', 'stressed', 'panic', 'fear', 'scared', 'overwhelmed'
+        ],
+        'msisimko' => [
+            // Swahili
+            'msisimko', 'msisimuko', 'shangwe', 'starehe', 'furaha kubwa', 'mchangamfu',
+            // English
+            'excited', 'thrilled', 'pumped', 'energetic', 'enthusiastic', 'hyped'
+        ],
+        'utulivu' => [
+            // Swahili
+            'utulivu', 'amani', 'starehe', 'utulifu', 'pumziko', 'upole',
+            // English
+            'calm', 'peaceful', 'relaxed', 'serene', 'tranquil', 'zen', 'chill'
+        ]
     ];
     
     foreach ($mood_keywords as $mood => $keywords) {
@@ -65,8 +96,62 @@ function analyzeMood($input) {
         }
     }
     
-    // Default to calm if no match found
-    return 'calm';
+    // Default to utulivu (calm) if no match found
+    return 'utulivu';
+}
+
+/**
+ * Translate mood from English to Swahili
+ */
+function translateMoodToSwahili($mood) {
+    $translations = [
+        'happy' => 'furaha',
+        'sad' => 'huzuni',
+        'angry' => 'hasira',
+        'anxious' => 'wasiwasi',
+        'excited' => 'msisimko',
+        'calm' => 'utulivu'
+    ];
+    
+    return $translations[$mood] ?? $mood;
+}
+
+/**
+ * Translate mood from Swahili to English
+ */
+function translateMoodToEnglish($mood) {
+    $translations = [
+        'furaha' => 'happy',
+        'huzuni' => 'sad',
+        'hasira' => 'angry',
+        'wasiwasi' => 'anxious',
+        'msisimko' => 'excited',
+        'utulivu' => 'calm'
+    ];
+    
+    return $translations[$mood] ?? $mood;
+}
+
+/**
+ * Get mood display name in Swahili
+ */
+function getMoodDisplayName($mood) {
+    $display_names = [
+        'happy' => 'Furaha',
+        'sad' => 'Huzuni',
+        'angry' => 'Hasira',
+        'anxious' => 'Wasiwasi',
+        'excited' => 'Msisimko',
+        'calm' => 'Utulivu',
+        'furaha' => 'Furaha',
+        'huzuni' => 'Huzuni',
+        'hasira' => 'Hasira',
+        'wasiwasi' => 'Wasiwasi',
+        'msisimko' => 'Msisimko',
+        'utulivu' => 'Utulivu'
+    ];
+    
+    return $display_names[$mood] ?? ucfirst($mood);
 }
 
 /**
@@ -137,5 +222,20 @@ function authenticateAdmin($pdo, $username, $password) {
         return true;
     }
     return false;
+}
+
+/**
+ * Get mood type display name in Swahili
+ */
+function getMoodTypeDisplayName($type) {
+    $display_names = [
+        'emoji' => 'Emoji',
+        'text' => 'Maandishi',
+        'maandishi' => 'Maandishi',
+        'voice' => 'Sauti',
+        'sauti' => 'Sauti'
+    ];
+    
+    return $display_names[$type] ?? ucfirst($type);
 }
 ?>

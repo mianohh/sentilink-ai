@@ -1,83 +1,126 @@
+-- ============================================
+-- SENTILINK AI - USANIDI WA DATABASE (KISWAHILI)
+-- ============================================
 
-USE sentilink_ai;
+USE if0_39555079_sentilink_ai;
 
--- Users table
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    ip_hash VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_ip_hash (ip_hash)
-);
-
--- Mood entries table
-CREATE TABLE mood_entries (
+-
+-- ============================================
+-- JEDWALI LA MAINGIZO YA HISIA (MOOD ENTRIES TABLE)
+-- ============================================
+CREATE TABLE IF NOT EXISTS mood_entries (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     mood_input TEXT NOT NULL,
-    mood_type ENUM('emoji', 'text', 'voice') DEFAULT 'text',
+    mood_type ENUM('emoji', 'maandishi', 'sauti') DEFAULT 'maandishi',
     mood_category VARCHAR(50) NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_timestamp (timestamp),
     INDEX idx_mood_category (mood_category)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Memes table
-CREATE TABLE memes (
+-- ============================================
+-- JEDWALI LA MEME (MEMES TABLE)
+-- ============================================
+CREATE TABLE IF NOT EXISTS memes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     mood_category VARCHAR(50) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     alt_text VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_mood_category (mood_category)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insights table
-CREATE TABLE insights (
+-- ============================================
+-- JEDWALI LA MAARIFA (INSIGHTS TABLE)
+-- ============================================
+CREATE TABLE IF NOT EXISTS insights (
     id INT AUTO_INCREMENT PRIMARY KEY,
     mood_category VARCHAR(50) NOT NULL,
     insight_text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_mood_category (mood_category)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Admin users table
-CREATE TABLE admin_users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
--- Insert sample data
+
+-- ============================================
+-- INGIZA DATA YA MEME (INSERT MEME DATA)
+-- ============================================
+
+-- Meme za Furaha (Happy Memes)
 INSERT INTO memes (mood_category, file_path, alt_text) VALUES
-('happy', 'images/memes/happy1.jpg', 'Happy dancing cat'),
-('happy', 'images/memes/happy2.jpg', 'Sunshine and rainbows'),
-('sad', 'images/memes/sad1.jpg', 'Comfort hug meme'),
-('sad', 'images/memes/sad2.jpg', 'Its okay to not be okay'),
-('angry', 'images/memes/angry1.jpg', 'Take a deep breath'),
-('angry', 'images/memes/angry2.jpg', 'Anger management cat'),
-('anxious', 'images/memes/anxious1.jpg', 'Breathing exercise reminder'),
-('anxious', 'images/memes/anxious2.jpg', 'You got this motivational'),
-('excited', 'images/memes/excited1.jpg', 'Party celebration'),
-('excited', 'images/memes/excited2.jpg', 'High energy vibes'),
-('calm', 'images/memes/calm1.jpg', 'Peaceful nature scene'),
-('calm', 'images/memes/calm2.jpg', 'Meditation reminder');
+('furaha', 'images/memes/furaha1.jpg', 'Paka anayecheza kwa furaha'),
+('furaha', 'images/memes/furaha2.jpg', 'Jua na upinde wa mvua');
 
+-- Meme za Huzuni (Sad Memes)
+INSERT INTO memes (mood_category, file_path, alt_text) VALUES
+('huzuni', 'images/memes/huzuni1.jpg', 'Meme ya kukumbatia kwa faraja'),
+('huzuni', 'images/memes/huzuni2.jpg', 'Ni sawa kutokuwa sawa');
+
+-- Meme za Hasira (Angry Memes)
+INSERT INTO memes (mood_category, file_path, alt_text) VALUES
+('hasira', 'images/memes/hasira1.jpg', 'Pumua kwa kina'),
+('hasira', 'images/memes/hasira2.jpg', 'Paka wa kudhibiti hasira');
+
+-- Meme za Wasiwasi (Anxious Memes)
+INSERT INTO memes (mood_category, file_path, alt_text) VALUES
+('wasiwasi', 'images/memes/wasiwasi1.jpg', 'Ukumbusho wa zoezi la kupumua'),
+('wasiwasi', 'images/memes/wasiwasi2.jpg', 'Unaweza - ukumbusho wa motisha');
+
+-- Meme za Msisimko (Excited Memes)
+INSERT INTO memes (mood_category, file_path, alt_text) VALUES
+('msisimko', 'images/memes/msisimko1.jpg', 'Sherehe ya karamu'),
+('msisimko', 'images/memes/msisimko2.jpg', 'Nishati ya juu');
+
+-- Meme za Utulivu (Calm Memes)
+INSERT INTO memes (mood_category, file_path, alt_text) VALUES
+('utulivu', 'images/memes/utulivu1.jpg', 'Mandhari ya asili yenye amani'),
+('utulivu', 'images/memes/utulivu2.jpg', 'Ukumbusho wa kutafakari');
+
+-- ============================================
+-- INGIZA MAARIFA YA KISAIKOLOJIA (INSERT PSYCHOLOGICAL INSIGHTS)
+-- ============================================
+
+-- Maarifa ya Furaha (Happiness Insights)
 INSERT INTO insights (mood_category, insight_text) VALUES
-('happy', 'Happiness is contagious! Your positive energy can brighten someone elses day. Consider sharing your joy with others.'),
-('happy', 'Studies show that expressing gratitude can amplify feelings of happiness. What are three things youre grateful for today?'),
-('sad', 'Its completely normal to feel sad sometimes. These emotions help us process experiences and grow stronger.'),
-('sad', 'Sadness often signals that something important to us needs attention. Take time to nurture yourself today.'),
-('angry', 'Anger is often a secondary emotion hiding hurt or frustration. Try to identify what triggered this feeling.'),
-('angry', 'Physical exercise can be an excellent way to channel anger constructively. Consider a quick walk or workout.'),
-('anxious', 'Anxiety often stems from focusing on future uncertainties. Try grounding yourself in the present moment.'),
-('anxious', 'Deep breathing activates your parasympathetic nervous system, naturally reducing anxiety levels.'),
-('excited', 'Excitement and anxiety share similar physiological responses. Channel this energy into something productive!'),
-('excited', 'High energy states are perfect for tackling challenging tasks or starting new projects.'),
-('calm', 'Calmness is a superpower in our fast-paced world. Use this peaceful state to reflect and recharge.'),
-('calm', 'Mindful moments like these help build emotional resilience for future challenges.');
+('furaha', 'Furaha ni ya kuambukiza! Nishati yako chanya inaweza kuangaza siku ya mtu mwingine. Fikiria kushiriki furaha yako na wengine.'),
+('furaha', 'Tafiti zinaonyesha kwamba kuelezea shukrani kunaweza kuongeza hisia za furaha. Ni mambo matatu gani unayoshukuru leo?');
 
--- Insert default admin user (username: admin, password: admin123)
-INSERT INTO admin_users (username, password_hash) VALUES
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+-- Maarifa ya Huzuni (Sadness Insights)
+INSERT INTO insights (mood_category, insight_text) VALUES
+('huzuni', 'Ni kawaida kabisa kuhisi huzuni wakati mwingine. Hisia hizi zinasaidia kuchakata uzoefu na kukua nguvu zaidi.'),
+('huzuni', 'Huzuni mara nyingi huashiria kwamba kitu muhimu kwetu kinahitaji umakini. Chukua muda kujitunza leo.');
+
+-- Maarifa ya Hasira (Anger Insights)
+INSERT INTO insights (mood_category, insight_text) VALUES
+('hasira', 'Hasira mara nyingi ni hisia ya pili inayoficha maumivu au kufadhaika. Jaribu kutambua ni nini kilichosababisha hisia hii.'),
+('hasira', 'Mazoezi ya kimwili yanaweza kuwa njia nzuri ya kutumia hasira kwa ufanisi. Fikiria kutembea au kufanya mazoezi haraka.');
+
+-- Maarifa ya Wasiwasi (Anxiety Insights)
+INSERT INTO insights (mood_category, insight_text) VALUES
+('wasiwasi', 'Wasiwasi mara nyingi hutokana na kuzingatia mambo yasiyo na uhakika ya siku zijazo. Jaribu kujiweka katika wakati wa sasa.'),
+('wasiwasi', 'Kupumua kwa kina huamsha mfumo wako wa parasympathetic, ukipunguza kiwango cha wasiwasi kwa asili.');
+
+-- Maarifa ya Msisimko (Excitement Insights)
+INSERT INTO insights (mood_category, insight_text) VALUES
+('msisimko', 'Msisimko na wasiwasi wanashiriki majibu sawa ya kimwili. Elekeza nishati hii katika kitu chenye tija!'),
+('msisimko', 'Hali za nishati ya juu ni bora kwa kushughulikia kazi ngumu au kuanza miradi mipya.');
+
+-- Maarifa ya Utulivu (Calmness Insights)
+INSERT INTO insights (mood_category, insight_text) VALUES
+('utulivu', 'Utulivu ni nguvu kubwa katika ulimwengu wetu wa haraka. Tumia hali hii ya amani kufikiria na kujaza nguvu.'),
+('utulivu', 'Wakati wa kutafakari kama hivi husaidia kujenga ustahimilivu wa kihisia kwa changamoto za siku zijazo.');
+
+-- ============================================
+-- INGIZA MTUMIAJI WA KIUTAWALA WA CHAGUO-MSINGI
+-- (INSERT DEFAULT ADMIN USER)
+-- Jina la mtumiaji: admin
+-- Nywila: admin123
+-- ============================================
+
+-- ============================================
+-- MWISHO WA USANIDI - DATABASE IMEANDALIWA!
+-- END OF SETUP - DATABASE IS READY!
+-- ============================================

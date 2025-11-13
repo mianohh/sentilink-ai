@@ -18,13 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = 'en-US';
+        recognition.lang = 'sw-KE'; // Changed to Swahili (Kenya)
         
         recognition.onstart = function() {
             isRecording = true;
             startVoiceBtn.style.display = 'none';
             stopVoiceBtn.style.display = 'inline-block';
-            voiceStatus.textContent = 'Listening... Speak now!';
+            voiceStatus.textContent = 'Inasikiliza... Sema sasa!';
             voiceStatus.className = 'mt-2 text-primary recording';
         };
         
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             moodTextArea.value = finalTranscript;
-            voiceStatus.textContent = 'Heard: ' + (finalTranscript || interimTranscript);
+            voiceStatus.textContent = 'Imesikia: ' + (finalTranscript || interimTranscript);
             
             if (finalTranscript) {
                 moodTypeInput.value = 'voice';
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         recognition.onerror = function(event) {
-            voiceStatus.textContent = 'Error: ' + event.error;
+            voiceStatus.textContent = 'Hitilafu: ' + event.error;
             voiceStatus.className = 'mt-2 text-danger';
             stopRecording();
         };
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
     } else {
         startVoiceBtn.style.display = 'none';
-        voiceStatus.textContent = 'Voice input not supported in this browser';
+        voiceStatus.textContent = 'Ingizo la sauti halijaunganishwa kwenye kivinjari hiki';
         voiceStatus.className = 'mt-2 text-warning';
     }
     
@@ -117,14 +117,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!hasEmoji && !hasText) {
             e.preventDefault();
-            alert('Please select an emoji or enter text to describe your mood!');
+            alert('Tafadhali chagua emoji au andika maandishi kuelezea hisia zako!');
             return false;
         }
         
         // Add loading state
         const submitBtn = this.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = 'Analyzing... 🔄';
+        submitBtn.innerHTML = 'Inachambuza... 🔄';
     });
     
     // Add smooth animations
@@ -177,6 +177,6 @@ function showNotification(message, type = 'info') {
 
 // Analytics tracking (placeholder)
 function trackMoodSubmission(moodType, moodCategory) {
-    console.log(`Mood submitted: ${moodType} - ${moodCategory}`);
+    console.log(`Hisia imewasilishwa: ${moodType} - ${moodCategory}`);
     // Add your analytics tracking code here
 }
